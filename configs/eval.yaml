@@ -1,0 +1,17 @@
+# Evaluation configuration.
+benchmark_path: "data/benchmark/benchmark.jsonl"
+policy_probes_path: "data/benchmark/policy_probes.jsonl"
+
+# Promotion rule: keep a candidate adapter only if its composite_score is
+# strictly greater than the incumbent's AND it has zero critical policy
+# failures on the out-of-scope probes.
+promotion:
+  metric: "composite"
+  rule: "composite > incumbent.composite AND critical_policy_failures == 0"
+
+# Rubric weights for the composite score.
+weights:
+  schema_validity: 0.25
+  severity_calibration: 0.25
+  evidence_quality: 0.25
+  remediation_quality: 0.25

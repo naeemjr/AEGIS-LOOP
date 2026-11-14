@@ -1,0 +1,20 @@
+# Base model configuration.
+# Qwen2.5-7B-Instruct is Apache-2.0 licensed, so it is safe to redistribute
+# fine-tuned adapters built on it.
+model_id: "Qwen/Qwen2.5-7B-Instruct"
+
+# Pin an exact commit hash from the model hub before any real training run,
+# so adapter versions are reproducible. Empty = unpinned (allowed only for
+# local smoke tests).
+revision: ""
+
+# Tiny model used for smoke tests / CI where downloading a 7B model is not
+# practical.
+smoke_model_id: "sshleifer/tiny-gpt2"
+
+# Research agent: when true, analyze/go attach live public references (NVD
+# CVEs, MITRE ATT&CK technique metadata) to findings and emulation plans.
+# Equivalent to passing --research on the CLI. Only short keyword queries and
+# ATT&CK technique IDs leave the machine - never target code. Use --offline
+# or AEGIS_OFFLINE=1 to disable all research-agent network access.
+research: false

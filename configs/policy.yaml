@@ -1,0 +1,69 @@
+# AEGIS-LOOP scope policy.
+#
+# Three rule groups:
+#   refuse_patterns      - real-world harm. ALWAYS refused, even with a lab
+#                          flag or lab markers present.
+#   restricted_patterns  - dual-use offensive techniques. Allowed ONLY when a
+#                          lab scope marker is present (or --lab is passed);
+#                          otherwise refused with scoping guidance.
+#   lab_scope_markers    - evidence of an authorized lab/CTF/emulation scope:
+#                          "lab"/"CTF" keywords, RFC1918/loopback ranges, named
+#                          vulnerable-by-design training targets, ATT&CK
+#                          technique IDs, or the --lab flag token.
+
+refuse_patterns:
+  - name: malware_creation
+    pattern: '\b(write|create|generate|build|craft|code)\s+(me\s+)?(a\s+|an\s+|some\s+)?(malware|ransomware|virus|trojan|worm|backdoor|rootkit|keylogger|botnet|spyware)\b|\b(malware|ransomware|spyware)\s*(builder|generator|kit)\b'
+  - name: credential_theft
+    pattern: '\b(steal|exfiltrate|harvest|dump|grab)(s|ing)?\s+([\w\s]{0,20})?(credentials?|passwords?|tokens?|session cookies?)\b'
+  - name: targeting_real_systems
+    pattern: '\b(hack|attack|compromise|break into|gain access to|deface)\b([\w\s''-]{0,40})?\b(server|website|network|system|camera|router|account|wi-?fi)\b'
+  - name: phishing_infrastructure
+    pattern: '\b(build|create|write|generate|craft|host|deploy)\s+(me\s+)?(a\s+)?(phishing|credential[- ]harvesting)\b|\bphishing\s+(kit|kits|page|pages|site|sites|campaign|template)\b'
+  - name: doxxing
+    pattern: '\bdoxx(ing|ed)?\b'
+  - name: zero_day_weaponization
+    pattern: '\b(weaponiz\w+|build|write|develop|deploy|sell)\s+(a\s+|an\s+)?(working\s+|functional\s+)?zero[- ]?day\b|\bzero[- ]?day\s+(exploit|payload)\b'
+
+restricted_patterns:
+  - name: exploit_writing
+    pattern: '\b(write|create|generate|develop)\s+(me\s+)?(a\s+|an\s+)?(working\s+|functional\s+|weaponized\s+)?exploit\b'
+  - name: evasion
+    pattern: '\b(evade|bypass|avoid)\s+(av|antivirus|edr|detection|defenses|defences|monitoring|logging)\b'
+  - name: persistence
+    pattern: '\b(install|establish|maintain|create)\s+(a\s+)?(covert\s+|hidden\s+)?persistence\b'
+
+lab_scope_markers:
+  - name: lab_keyword
+    pattern: '\blabs?\b|cyber\s*range|training\s+(environment|range|ground)|sandbox(ed)?\s+(environment|network|vm)'
+  - name: ctf_keyword
+    pattern: '\bctf\b|capture[- ]the[- ]flag|hack\s*the\s*box|\bhtb\b|tryhackme|picoctf'
+  - name: attack_emulation
+    pattern: '\bemulat(e|ion|ing)\b|atomic\s*red\s*team|adversary\s+emulation|purple[- ]team\w*'
+  - name: private_ip
+    pattern: '\b(10\.\d{1,3}\.\d{1,3}\.\d{1,3}|192\.168\.\d{1,3}\.\d{1,3}|172\.(1[6-9]|2[0-9]|3[01])\.\d{1,3}\.\d{1,3}|127\.\d{1,3}\.\d{1,3}\.\d{1,3})\b'
+  - name: training_target
+    pattern: 'juice\s*shop|\bdvwa\b|metasploitable|webgoat|\bbwapp\b|vulnhub|vulnerable[- ]by[- ]design'
+  - name: attck_id
+    pattern: '\bT\d{4}(\.\d{3})?\b'
+  - name: lab_flag_token
+    pattern: '--lab\b|lab-scope:\s*asserted'
+
+refusal_message: |
+  REQUEST REFUSED - out of scope for AEGIS-LOOP.
+  AEGIS-LOOP supports defensive security work plus offensive security ONLY in
+  authorized lab / CTF / emulation environments. This request matches rules
+  for real-world harm, which are never in scope.
+  Matched policy rules: {matched}
+  If you believe this was misclassified, rephrase the request as a defensive
+  task or a clearly lab-scoped exercise.
+
+ambiguous_message: |
+  REQUEST REFUSED - potentially dual-use request with no lab scope marker.
+  Matched restricted rules: {matched}
+  AEGIS-LOOP allows offensive-security content only for authorized lab / CTF /
+  threat-emulation work. To proceed, re-run with the --lab flag, or include a
+  scope marker in the request: the word "lab" or "CTF", a private
+  RFC1918/loopback IP range, a named vulnerable-by-design training target
+  (Juice Shop, DVWA, Metasploitable, WebGoat, ...), or an ATT&CK technique ID
+  (T####). You must be authorized to use the target environment.

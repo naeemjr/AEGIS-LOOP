@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aegis-loop"
+version = "0.1.0"
+description = "Versioned LoRA/QLoRA fine-tuning and multi-agent analysis pipeline for DEFENSIVE security research"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "typer>=0.9",
+    "pydantic>=2.5",
+    "pyyaml>=6.0",
+    "jinja2>=3.1",
+]
+
+[project.optional-dependencies]
+# Heavy ML extras are intentionally NOT installed by default. train.py imports
+# them lazily and fails with a clear message when they are missing.
+ml = [
+    "torch",
+    "transformers",
+    "peft",
+    "trl",
+    "datasets",
+    "bitsandbytes",
+    "accelerate",
+]
+dev = ["pytest>=7.4"]
+
+[project.scripts]
+aegis-loop = "aegis_loop.cli:app"
+
+[tool.setuptools.packages.find]
+where = ["src"]

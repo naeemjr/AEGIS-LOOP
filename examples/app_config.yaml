@@ -1,0 +1,9 @@
+# AEGIS-LOOP REVIEW FIXTURE - intentionally insecure demo configuration.
+# Used only as a target for defensive config-review testing. Do not deploy.
+service:
+  name: demo-api
+  debug: true            # REVIEW FIXTURE: debug mode enabled
+  tls:
+    verify: false        # REVIEW FIXTURE: TLS certificate verification disabled
+  logging:
+    level: debug         # REVIEW FIXTURE: verbose logging may leak sensitive data
